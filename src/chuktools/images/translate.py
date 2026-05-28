@@ -18,12 +18,29 @@ MT_MODELS = {
 }
 
 
+STOPWORDS = {
+    # English
+    "a", "an", "the", "this", "that", "these", "those", "there", "here",
+    "is", "are", "was", "were", "be", "been", "being",
+    "of", "in", "on", "at", "to", "for", "with", "and", "or", "by",
+    "it", "its", "as", "from", "into", "picture", "image", "photo",
+    # German
+    "ein", "eine", "einen", "einer", "eines", "einem",
+    "der", "die", "das", "des", "dem", "den",
+    "ist", "sind", "war", "waren", "sein", "wird",
+    "es", "da", "dort", "hier", "dies", "diese", "dieser", "dieses",
+    "gibt", "steht", "sitzt", "sitzen", "im", "in", "auf", "an", "am",
+    "und", "oder", "mit", "zu", "zum", "zur", "von", "vom", "bei", "fuer",
+    "bild", "foto", "des", "vor", "nach", "ueber", "unter",
+}
+
+
 def _slugify(text: str, max_words: int = 6) -> str:
-    text = text.lower().strip().rstrip(".")
-    text = (text.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss"))
+    text = text.lower().strip().rstrip(".,!?")
+    text = text.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss")
     text = re.sub(r"[^a-z0-9\s-]", "", text)
-    words = text.split()[:max_words]
-    return "_".join(words) or "untitled"
+    words = [w for w in text.split() if w not in STOPWORDS]
+    return "_".join(words[:max_words]) or "untitled"
 
 
 def translate(
