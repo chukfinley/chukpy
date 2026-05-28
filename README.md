@@ -73,14 +73,27 @@ chuktools images thumbnails ~/photos --size 256 --format webp
 ### `chuktools images caption`
 
 Caption each image with BLIP and (by default) copy files to `out/` with
-slugified filenames.
+slugified filenames. Optional `--lang` runs en→target translation
+(Helsinki-NLP MarianMT) so the slug ends up in the target language.
 
 ```bash
 chuktools images caption ~/scans --model blip-large
-chuktools images caption ~/scans --no-rename   # only write _captions.tsv
+chuktools images caption ~/scans --lang de        # German slugs + captions
+chuktools images caption ~/scans --no-rename      # only write the TSV
 ```
 
-Models: `blip-base`, `blip-large`.
+Models: `blip-base`, `blip-large`. Languages: `en` (default), `de`, `fr`,
+`es`, `it`, `nl`, `ru`.
+
+### `chuktools images translate`
+
+Take an existing `_captions.tsv` (from a previous English caption run) and
+produce a new directory of files renamed with translated slugs. Useful when
+you've already paid for BLIP and just want a different language.
+
+```bash
+chuktools images translate ~/scans/rotated_named --lang de
+```
 
 ### `chuktools dias rotate`
 
