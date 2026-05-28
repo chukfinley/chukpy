@@ -1,0 +1,32 @@
+[project]
+name = "chuktools"
+version = "0.1.0"
+description = "Chuk's personal CLI grab-bag — Python scripts as subcommands."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "chukfinley" }]
+dependencies = [
+    "typer>=0.12",
+    "pillow>=10",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dias = [
+    "torch>=2.2",
+    "torchvision>=0.17",
+    "transformers>=4.40",
+    "check_orientation>=0.0.5",
+    "timm>=1.0",
+]
+
+[project.scripts]
+chuktools = "chuktools.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chuktools"]
