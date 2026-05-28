@@ -10,9 +10,18 @@ dependencies = [
     "typer>=0.12",
     "pillow>=10",
     "tqdm>=4.66",
+    "imagehash>=4.3",
 ]
 
 [project.optional-dependencies]
+ai = [
+    "torch>=2.2",
+    "torchvision>=0.17",
+    "transformers>=4.40",
+    "check_orientation>=0.0.5",
+    "timm>=1.0",
+]
+# kept for backwards-compat:
 dias = [
     "torch>=2.2",
     "torchvision>=0.17",

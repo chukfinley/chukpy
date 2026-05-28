@@ -10,7 +10,8 @@ binary (`chuktools`). Extend by dropping a new subcommand group into
 git clone git@github.com:chukfinley/chukpy.git
 cd chukpy
 uv venv
-uv pip install -e ".[dias]"     # extras: image tools
+uv pip install -e ".[ai]"     # includes torch/transformers for caption + rotate
+# or skip [ai] for just hash/exif/thumbnail tools
 ```
 
 Or, ad-hoc with `uv tool`:
@@ -23,40 +24,74 @@ uv tool install --from . chuktools
 
 ```bash
 chuktools --help
+chuktools images --help
 chuktools dias --help
 ```
 
+### `chuktools images dupes`
+
+Find pixel-identical duplicates via SHA256.
+
+```bash
+chuktools images dupes ~/photos                 # report only
+chuktools images dupes ~/photos --move ~/dupes  # move all but the first occurrence
+chuktools images dupes ~/photos --delete        # delete all but the first
+```
+
+### `chuktools images similar`
+
+Find near-duplicates via perceptual hashing (default pHash). Hamming
+distance ≤ threshold groups files together.
+
+```bash
+chuktools images similar ~/photos --threshold 5
+chuktools images similar ~/photos --method dhash --move ~/similar
+```
+
+Methods: `phash` (default), `dhash`, `ahash`, `whash`.
+
+### `chuktools images organize`
+
+Reorganize by EXIF DateTime into dated filenames or folders.
+
+```bash
+chuktools images organize ~/scans              # flat: 2024-08-12_001.jpg
+chuktools images organize ~/scans --by tree    # tree: 2024/08/12/001.jpg
+chuktools images organize ~/scans --move       # move instead of copy
+```
+
+Files without EXIF date land in `unknown_date/`.
+
+### `chuktools images thumbnails`
+
+Batch-generate thumbnails (longest edge = `--size`, default 512 px).
+
+```bash
+chuktools images thumbnails ~/photos --size 256 --format webp
+```
+
+### `chuktools images caption`
+
+Caption each image with BLIP and (by default) copy files to `out/` with
+slugified filenames.
+
+```bash
+chuktools images caption ~/scans --model blip-large
+chuktools images caption ~/scans --no-rename   # only write _captions.tsv
+```
+
+Models: `blip-base`, `blip-large`.
+
 ### `chuktools dias rotate`
 
-Auto-rotate a directory of scanned slides upright using
-[`check_orientation`](https://github.com/ternaus/check_orientation)
-(pretrained ResNeXt50, 4-class CCW classifier).
+Auto-rotate scanned slides upright using
+[`check_orientation`](https://github.com/ternaus/check_orientation) (pretrained
+ResNeXt50, 4-class CCW classifier).
 
 ```bash
 chuktools dias rotate /path/to/scans
 # writes to /path/to/scans/rotated/ + _rotation_log.txt
 ```
-
-Options:
-- `--out, -o`  output directory (default `<src>/rotated`)
-- `--glob`     match pattern (default `*.JPG`)
-- `--quality`  JPEG quality (default 95)
-
-### `chuktools dias caption`
-
-Caption every image with BLIP and (by default) copy files into a new directory
-with slugified filenames.
-
-```bash
-chuktools dias caption /path/to/scans/rotated --model blip-large
-```
-
-Options:
-- `--out, -o`     output directory (default `<src>_named` next to src)
-- `--glob`        match pattern (default `*.JPG`)
-- `--model`       `blip-base` or `blip-large` (default `blip-large`)
-- `--no-rename`   only write `_captions.tsv`, don't copy files
-- `--max-words`   words used for slug (default 6)
 
 ## Adding a new subcommand group
 
